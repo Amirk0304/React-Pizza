@@ -1,17 +1,17 @@
-import React from 'react'
-import Header from './components/Header.jsx'
-import Home from './pages/Home.jsx'
-import Cart from './pages/Cart.jsx'
-import CartEmpty from './pages/CartEmpty.jsx'
+import React, { FC } from 'react'
+import Header from './components/Header.js'
+import Home from './pages/Home.js'
+import Cart from './pages/Cart.js'
+import CartEmpty from './pages/CartEmpty.js'
 import { Route, Routes } from 'react-router-dom'
 
-function App() {
+const App: FC = () => {
 	return (
 		<div className='wrapper'>
 			<Header />
 			<div className='content'>
 				<Routes>
-					<Route path='/' element={<Home />} exact />
+					<Route path='/' element={<Home />} />
 					<Route path='/Cart' element={<Cart />} />
 					<Route path='/CartEmpty' element={<CartEmpty />} />
 				</Routes>

@@ -1,9 +1,9 @@
-import React from 'react'
-import Button from './Button.jsx'
+import React, { FC } from 'react'
+import Button from './Button'
 import { Link } from 'react-router-dom'
-import logo from '../assets/img/pizza-logo.svg'
+const logo = new URL('../assets/img/pizza-logo.svg', import.meta.url).href
 
-function Header() {
+const Header: FC = () => {
 	return (
 		<div className='header'>
 			<div className='container'>

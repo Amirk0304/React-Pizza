@@ -1,18 +1,19 @@
-import React, { useEffect, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import Categories from '../components/Categories.jsx'
-import Sort from '../components/Sort.jsx'
-import PizzaBlock from '../components/PizzaBlock/PizzaBlock.jsx'
-import CartSkeleton from '../components/PizzaBlock/CartSkeleton.jsx'
+import React, { FC, useEffect, useMemo } from 'react'
+import Categories from '../components/Categories.js'
+import Sort from '../components/Sort.js'
+import PizzaBlock from '../components/PizzaBlock/PizzaBlock.js'
+import CartSkeleton from '../components/PizzaBlock/CartSkeleton.js'
 import {
 	fetchProducts,
 	setCategoryId,
 	setSortIndex,
 } from '../redux/actions/productsSlice.js'
+import { useAppDispatch, useAppSelector } from '../redux/hooks/Hooks.ts'
+import { Product } from '../redux/actions/Types.ts'
 
-function Home() {
-	const dispatch = useDispatch()
-	const { items, status, categoryId, sortIndex } = useSelector(
+const Home: FC = () => {
+	const dispatch = useAppDispatch()
+	const { items, status, categoryId, sortIndex } = useAppSelector(
 		state => state.products
 	)
 	useEffect(() => {
@@ -21,23 +22,34 @@ function Home() {
 		}
 	}, [dispatch, status])
 
-	const categories = ['Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые']
-	const sortItems = ['Популярности', 'Цене', 'Алфавиту']
+	type CategoriesType = string[]
+	type SortItemsType = string[]
 
-	const filteredItems = useMemo(() => {
-		const byCategory =
-			categoryId === null ? items : items.filter(p => p.category === categoryId)
+	const categories: CategoriesType = [
+		'Мясные',
+		'Вегетарианская',
+		'Гриль',
+		'Острые',
+		'Закрытые',
+	]
+	const sortItems: SortItemsType = ['Популярности', 'Цене', 'Алфавиту']
+
+	const filteredItems = useMemo<Product[]>(() => {
+		const byCategory: Product[] =
+			categoryId === null
+				? items
+				: items.filter((p: Product) => p.category === categoryId)
+
 		const sorted = [...byCategory]
+
 		if (sortIndex === 0) {
-			// Популярности (по rating desc)
 			sorted.sort((a, b) => b.rating - a.rating)
 		} else if (sortIndex === 1) {
-			// Цене (asc)
 			sorted.sort((a, b) => a.price - b.price)
 		} else if (sortIndex === 2) {
-			// Алфавиту (name asc, locale)
 			sorted.sort((a, b) => a.name.localeCompare(b.name))
 		}
+
 		return sorted
 	}, [items, categoryId, sortIndex])
 

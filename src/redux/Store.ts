@@ -1,4 +1,3 @@
-// src/app/store.js
 import { configureStore } from '@reduxjs/toolkit'
 import productsReducer from './actions/productsSlice'
 import cartReducer from './reducer/Cart'
@@ -11,3 +10,7 @@ const store = configureStore({
 })
 
 export default store
+
+export type RootState = ReturnType<typeof store.getState>
+
+export type AppDispatch = typeof store.dispatch

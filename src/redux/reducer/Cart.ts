@@ -1,21 +1,36 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { createSelector } from '@reduxjs/toolkit'
 
-// Cart item identity: same pizza id + type index + size value are merged
-function makeItemKey(item) {
+type CartStoredItem = {
+	id: number
+	name?: string
+	price: number
+	imageUrl?: string
+	type: number
+	size: number
+	count: number
+}
+
+type CartState = {
+	itemsByKey: Record<string, CartStoredItem>
+	totalCount: number
+	totalPrice: number
+}
+
+const makeItemKey = (item: Omit<CartStoredItem, 'count'>): string => {
 	return `${item.id}__t${item.type}__s${item.size}`
 }
 
-const initialState = {
+const initialState: CartState = {
 	itemsByKey: {}, // key -> { id, name, price, imageUrl, type, size, count }
 	totalCount: 0,
 	totalPrice: 0,
 }
 
-function recomputeTotals(state) {
+const recomputeTotals = (state: CartState): void => {
 	let totalCount = 0
 	let totalPrice = 0
-	Object.values(state.itemsByKey).forEach(cartItem => {
+	Object.values(state.itemsByKey).forEach((cartItem: CartStoredItem) => {
 		totalCount += cartItem.count
 		totalPrice += cartItem.count * cartItem.price
 	})
@@ -71,6 +86,12 @@ const cartSlice = createSlice({
 	},
 })
 
+type makeItemKeyFromOptionsTypes = (
+	id: number,
+	type: number,
+	size: number
+) => string
+
 export const { addItem, incrementItem, decrementItem, removeItem, clearCart } =
 	cartSlice.actions
 
@@ -82,17 +103,25 @@ export const selectCartTotals = createSelector(
 
 export const selectCartItems = createSelector(
 	state => state.cart.itemsByKey,
-	itemsByKey =>
-		Object.entries(itemsByKey).map(([key, value]) => ({ key, ...value }))
+	(itemsByKey: CartState['itemsByKey']) =>
+		Object.entries(itemsByKey).map(([key, value]) => ({
+			key,
+			...(value as CartStoredItem),
+		}))
 )
 
-export const makeSelectCountByPizzaId = id => state =>
-	Object.values(state.cart.itemsByKey).reduce(
-		(sum, it) => (it.id === id ? sum + it.count : sum),
-		0
-	)
+export const makeSelectCountByPizzaId =
+	(id: number) => (state: { cart: CartState }) =>
+		Object.values(state.cart.itemsByKey).reduce(
+			(sum: number, it: CartStoredItem) =>
+				it.id === id ? sum + it.count : sum,
+			0
+		)
 
-export const makeItemKeyFromOptions = (id, type, size) =>
-	`${id}__t${type}__s${size}`
+export const makeItemKeyFromOptions: makeItemKeyFromOptionsTypes = (
+	id,
+	type,
+	size
+) => `${id}__t${type}__s${size}`
 
 export default cartSlice.reducer

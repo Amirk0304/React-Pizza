@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
+import { Product } from './Types.ts'
 
 export const fetchProducts = createAsyncThunk(
 	'products/fetchProducts',
@@ -9,15 +10,24 @@ export const fetchProducts = createAsyncThunk(
 	}
 )
 
+interface ProductsState {
+	items: Product[]
+	status: 'idle' | 'loading' | 'succeeded' | 'failed'
+	error: string | null
+	categoryId: number | null
+	sortIndex: number
+}
+const initialState: ProductsState = {
+	items: [],
+	status: 'idle',
+	error: null,
+	categoryId: null,
+	sortIndex: 0,
+}
+
 const productsSlice = createSlice({
 	name: 'products',
-	initialState: {
-		items: [],
-		status: 'idle',
-		error: null,
-		categoryId: null,
-		sortIndex: 0,
-	},
+	initialState,
 	reducers: {
 		setCategoryId: (state, action) => {
 			state.categoryId = action.payload
@@ -37,7 +47,7 @@ const productsSlice = createSlice({
 			})
 			.addCase(fetchProducts.rejected, (state, action) => {
 				state.status = 'failed'
-				state.error = action.error.message
+				state.error = action.error.message ?? null
 			})
 	},
 })

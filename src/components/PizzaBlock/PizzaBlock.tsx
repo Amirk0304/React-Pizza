@@ -1,26 +1,43 @@
-import { React, useMemo, useState } from 'react'
-import pizza from '../../assets/img/pizza.jpg'
+import React, { useMemo, useState, FC } from 'react'
+const pizza = new URL('../../assets/img/pizza.jpg', import.meta.url).href
 import classNames from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { addItem, makeSelectCountByPizzaId } from '../../redux/reducer/Cart'
 
-function PizzaBlock({ id, name, price, types, sizes }) {
-	const dispatch = useDispatch()
-	const selectCountByPizzaId = useMemo(() => makeSelectCountByPizzaId(id), [id])
-	const countForThisPizza = useSelector(selectCountByPizzaId)
+export type PizzaBlockProps = {
+	id: number
+	name: string
+	price: number
+	types: number[]
+	sizes: number[]
+}
 
-	const availableTypes = ['Тонкое', 'Традиционное']
-	const availableSizes = [26, 30, 40]
+const PizzaBlock: FC<PizzaBlockProps> = ({ id, name, price, types, sizes }) => {
+	const dispatch = useDispatch()
+	const countForThisPizza =
+		(useSelector((state: any) =>
+			makeSelectCountByPizzaId(id)(state)
+		) as number) || 0
+
+	type availableTypes = string[]
+	type availableSizes = number[]
+
+	const availableTypes: availableTypes = ['Тонкое', 'Традиционное']
+	const availableSizes: availableSizes = [26, 30, 40]
 	const [activeType, setActiveType] = useState(types[0])
 	const [activeSize, setActiveSize] = useState(sizes[0])
 
-	const onSelectItem = index => {
+	type onSelectItem = (index: number) => void
+	type onSelectSize = (index: number) => void
+	type onAddPizza = () => void
+
+	const onSelectItem: onSelectItem = index => {
 		setActiveType(index)
 	}
-	const onSelectSize = index => {
+	const onSelectSize: onSelectSize = index => {
 		setActiveSize(index)
 	}
-	const onAddPizza = () => {
+	const onAddPizza: onAddPizza = () => {
 		dispatch(
 			addItem({
 				id,

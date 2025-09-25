@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 import cartEmpty from '../assets/img/empty-cart.png'
 import { useNavigate } from 'react-router-dom'
 
-function CartEmpty() {
+const CartEmpty: FC = () => {
 	const navigate = useNavigate()
 
 	const goBack = () => navigate(-1)

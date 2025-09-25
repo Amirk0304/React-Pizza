@@ -1,6 +1,12 @@
-import React from 'react'
+import React, { FC } from 'react'
 
-function Categories({ items, activeIndex, onSelect }) {
+type CategoriesProps = {
+	items: string[]
+	activeIndex: number | null
+	onSelect: (index: number | null) => void
+}
+
+const Categories: FC<CategoriesProps> = ({ items, activeIndex, onSelect }) => {
 	return (
 		<div className='categories'>
 			<ul>

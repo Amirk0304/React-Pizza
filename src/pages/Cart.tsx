@@ -1,7 +1,7 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { FC } from 'react'
+import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import pizzaImage from '../assets/img/pizza.jpg'
+const pizza = new URL('../../assets/img/pizza.jpg', import.meta.url).href
 import {
 	selectCartItems,
 	selectCartTotals,
@@ -10,13 +10,13 @@ import {
 	removeItem,
 	clearCart,
 } from '../redux/reducer/Cart'
+import { useAppDispatch, useAppSelector } from '../redux/hooks/Hooks.ts'
 
-function Cart() {
-	const dispatch = useDispatch()
+const Cart: FC = () => {
+	const dispatch = useAppDispatch()
+	const items = useAppSelector(selectCartItems)
 	const navigate = useNavigate()
-	const items = useSelector(selectCartItems)
 	const goBack = () => navigate(-1)
-
 	const { totalCount, totalPrice } = useSelector(selectCartTotals)
 
 	return (
@@ -100,11 +100,7 @@ function Cart() {
 					{items.map(item => (
 						<div className='cart__item' key={item.key}>
 							<div className='cart__item-img'>
-								<img
-									className='pizza-block__image'
-									src={pizzaImage}
-									alt='Pizza'
-								/>
+								<img className='pizza-block__image' src={pizza} alt='Pizza' />
 							</div>
 							<div className='cart__item-info'>
 								<h3>{item.name}</h3>

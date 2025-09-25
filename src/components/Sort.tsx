@@ -1,16 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { FC, useState, useRef, useEffect } from 'react'
 
-function Sort({ items, activeIndex, onSelect }) {
-	const [visiblePopup, setVisiblePopup] = useState(false)
-	const sortRef = useRef()
-	const activeLabel = items[activeIndex]
+type activeIndexType = NonNullable<number | null>
+
+type SortProps = {
+	items: string[]
+	activeIndex: activeIndexType
+	onSelect: (index: number | null) => void
+}
+
+const Sort: FC<SortProps> = ({ items, activeIndex, onSelect }) => {
+	const [visiblePopup, setVisiblePopup] = useState<boolean>(false)
+	const sortRef = useRef<HTMLDivElement>(null)
+	const activeLabel = activeIndex !== null ? items[activeIndex] : '---'
 
 	const toggleVisiblePopup = () => {
 		setVisiblePopup(!visiblePopup)
 	}
 
-	const handleOutsideClick = e => {
-		if (sortRef.current && !sortRef.current.contains(e.target)) {
+	const handleOutsideClick = (e: MouseEvent) => {
+		if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
 			setVisiblePopup(false)
 		}
 	}
